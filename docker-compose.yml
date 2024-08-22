@@ -1,0 +1,44 @@
+services:
+  php:
+    build:
+      context: ./products
+      dockerfile: Dockerfile
+    env_file:
+      - ./products/.env
+    volumes:
+      - ./products:/var/www/html
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  react:
+    build:
+      context: ./react-fsaul9
+      dockerfile: Dockerfile
+    env_file:
+      - ./react-fsaul9/.env
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: myapp_db
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./products/products.sql:/docker-entrypoint-initdb.d/products.sql
+    networks:
+      - app-network
+
+volumes:
+  db-data:
+
+networks:
+  app-network:
+    driver: bridge

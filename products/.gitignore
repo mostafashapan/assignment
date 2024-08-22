@@ -1,0 +1,28 @@
+# Ignore Composer dependencies
+
+
+# Ignore environment configuration
+.env
+
+# Ignore Composer lock file if needed (usually it's good to track it)
+# /composer.lock
+
+# Ignore IDE specific files and directories
+.idea/
+.vscode/
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore log files and temporary files
+*.log
+*.tmp
+
+# Ignore build artifacts
+/build/
+/dist/
+
+# Ignore other system files
+.env.local
+.env.*.local
