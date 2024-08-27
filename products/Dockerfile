@@ -1,4 +1,3 @@
-# Use the official PHP image as the base
 FROM php:8.2-apache
 
 # Install system dependencies and PHP extensions
@@ -7,7 +6,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     && docker-php-ext-install zip mysqli pdo pdo_mysql \
-    && rm -rf /var/lib/apt/lists/* # Clean up to reduce image size
+    && rm -rf /var/lib/apt/lists/*
 
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
@@ -28,11 +27,16 @@ COPY src/ /var/www/html/src/
 COPY composer.json /var/www/html/
 COPY .env /var/www/html/
 
+# Copy SQL initialization script and init-db.php
+COPY products.sql /var/www/html/
+COPY init-db.php /var/www/html/
+
+# Copy the entrypoint script
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
-
-# Copy any remaining application code (excluding files already copied)
-COPY . /var/www/html/
 
 # Set the permissions
 RUN chown -R www-data:www-data /var/www/html \
@@ -41,5 +45,5 @@ RUN chown -R www-data:www-data /var/www/html \
 # Expose port 80
 EXPOSE 80
 
-# Start Apache server
-CMD ["apache2-foreground"]
+# Start Apache server with entrypoint script
+ENTRYPOINT ["entrypoint.sh"]

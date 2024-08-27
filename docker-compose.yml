@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   php:
     build:
@@ -32,7 +34,6 @@ services:
       MYSQL_DATABASE: myapp_db
     volumes:
       - db-data:/var/lib/mysql
-      - ./products/products.sql:/docker-entrypoint-initdb.d/products.sql
     networks:
       - app-network
 

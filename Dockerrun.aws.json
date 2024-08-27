@@ -1,0 +1,102 @@
+{
+    "AWSEBDockerrunVersion": 2,
+    "containerDefinitions": [
+      {
+        "name": "php",
+        "image": "01013120886/myapp-php:latest",
+        "essential": true,
+        "memory": 512,
+        "portMappings": [
+          {
+            "containerPort": 80,
+            "hostPort": 8080
+          }
+        ],
+        "environment": [
+          {
+            "name": "DB_CONNECTION",
+            "value": "mysql"
+          },
+          {
+            "name": "DB_DATABASE",
+            "value": "myapp_db"
+          },
+          {
+            "name": "DB_HOST",
+            "value": "db"  // Use 'db' to refer to the database container
+          },
+          {
+            "name": "DB_PASSWORD",
+            "value": ""
+          },
+          {
+            "name": "DB_PORT",
+            "value": "3306"
+          },
+          {
+            "name": "DB_USERNAME",
+            "value": "root"
+          }
+        ]
+      },
+      {
+        "name": "react",
+        "image": "01013120886/myapp-react:latest",
+        "essential": true,
+        "memory": 256,
+        "portMappings": [
+          {
+            "containerPort": 3000,
+            "hostPort": 3000
+          }
+        ],
+        "environment": [
+          {
+            "name": "REACT_APP_API_URL",
+            "value": "http://php:80"  // Reference the PHP container
+          }
+        ]
+      },
+      {
+        "name": "db",
+        "image": "mysql:8.0",
+        "essential": true,
+        "memory": 512,
+        "environment": [
+          {
+            "name": "MYSQL_ALLOW_EMPTY_PASSWORD",
+            "value": "yes"
+          },
+          {
+            "name": "MYSQL_DATABASE",
+            "value": "myapp_db"
+          }
+        ],
+        "mountPoints": [
+          {
+            "sourceVolume": "db-data",
+            "containerPath": "/var/lib/mysql"
+          },
+          {
+            "sourceVolume": "sql-init",
+            "containerPath": "/docker-entrypoint-initdb.d/products.sql"
+          }
+        ]
+      }
+    ],
+    "volumes": [
+      {
+        "name": "db-data",
+        "host": {
+          "sourcePath": "/var/lib/ebs/db-data"
+        }
+      },
+      {
+        "name": "sql-init",
+        "host": {
+          "sourcePath": "/var/lib/ebs/products/products.sql"
+        }
+      }
+    ]
+  }
+  
